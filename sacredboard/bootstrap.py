@@ -169,4 +169,5 @@ def add_mongo_config_with_uri(app, connection_string_uri,
 
 
 if __name__ == '__main__':
+    "HELLO WORLD"
     run()
