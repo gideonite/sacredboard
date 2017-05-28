@@ -3,8 +3,9 @@
 import bson
 import pymongo
 
+from sacredboard.app.data.datastorage import DataStorage
 
-class PyMongoDataAccess:
+class PyMongoDataAccess(DataStorage):
     """Access records in MongoDB."""
 
     RUNNING_DEAD_RUN_CLAUSE = {
@@ -19,6 +20,7 @@ class PyMongoDataAccess:
         Better use the static methods build_data_access
         or build_data_access_with_uri
         """
+        super().__init__()
         self._uri = uri
         self._db_name = database_name
         self._client = None
