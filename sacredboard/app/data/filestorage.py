@@ -1,3 +1,4 @@
+import datetime
 import os
 import json
 
@@ -18,7 +19,23 @@ def _read_json(path_to_json):
 
 def _create_run(runjson, configjson):
     runjson["config"] = configjson
+
+    # TODO probably want a smarter way of detecting which values have type "time."
+    for k in ["start_time", "stop_time", "heartbeat"]:
+        runjson[k] = datetime.datetime.strptime(runjson[k], '%Y-%m-%dT%H:%M:%S.%f')
+
     return runjson
+
+class Cursor():
+    def __init__(self, count, iterable):
+        self.iterable = iterable
+        self._count = count
+
+    def count(self):
+        return self._count
+
+    def __iter__(self):
+        return iter(self.iterable)
 
 class FileStorage(DataStorage):
     def __init__(self, path_to_dir):
@@ -32,10 +49,14 @@ class FileStorage(DataStorage):
 
     def get_runs(self, sort_by=None, sort_direction=None,
                  start=0, limit=None, query={"type": "and", "filters": []}):
-        all_run_ids = os.listdir(self.path_to_dir)
-        blacklist = set(["_sources"])
-        for id in all_run_ids:
-            if id in blacklist:
-                continue
 
-            yield self.get_run(id)
+        def ret():
+            all_run_ids = os.listdir(self.path_to_dir)
+            blacklist = set(["_sources"])
+            for id in all_run_ids:
+                if id in blacklist:
+                    continue
+
+                yield self.get_run(id)
+
+        return Cursor(42, ret())
