@@ -50,8 +50,9 @@ class FileStorage(DataStorage):
     def get_runs(self, sort_by=None, sort_direction=None,
                  start=0, limit=None, query={"type": "and", "filters": []}):
 
+        all_run_ids = os.listdir(self.path_to_dir)
+
         def ret():
-            all_run_ids = os.listdir(self.path_to_dir)
             blacklist = set(["_sources"])
             for id in all_run_ids:
                 if id in blacklist:
@@ -59,4 +60,6 @@ class FileStorage(DataStorage):
 
                 yield self.get_run(id)
 
-        return Cursor(42, ret())
+        count = len(all_run_ids)
+
+        return Cursor(count, ret())
