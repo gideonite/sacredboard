@@ -36,7 +36,7 @@ app = Flask(__name__)
                    "You might need it if you use a custom collection name "
                    "or Sacred v0.6 (which used default.runs). "
                    "Default: runs")
-@click.option("-f", default="",
+@click.option("-F", default="",
               help="Path to directory containing experiments.")
 @click.option("--no-browser", is_flag=True, default=False,
               help="Do not open web browser automatically.")
