@@ -26,7 +26,7 @@ def _create_run(runjson, configjson):
 
     return runjson
 
-class Cursor():
+class FileStoreCursor():
     def __init__(self, count, iterable):
         self.iterable = iterable
         self._count = count
@@ -52,7 +52,7 @@ class FileStorage(DataStorage):
 
         all_run_ids = os.listdir(self.path_to_dir)
 
-        def ret():
+        def run_iterator():
             blacklist = set(["_sources"])
             for id in all_run_ids:
                 if id in blacklist:
@@ -61,5 +61,4 @@ class FileStorage(DataStorage):
                 yield self.get_run(id)
 
         count = len(all_run_ids)
-
-        return Cursor(count, ret())
+        return FileStoreCursor(count, run_iterator())
