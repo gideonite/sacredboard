@@ -3,7 +3,17 @@
 import bson
 import pymongo
 
-from sacredboard.app.data.datastorage import DataStorage
+from sacredboard.app.data.datastorage import Cursor, DataStorage
+
+class MongoDbCursor(Cursor):
+    def __init__(self, mongodb_cursor):
+        self.mongodb_cursor = mongodb_cursor
+
+    def count(self):
+        return self.mongodb_cursor.count()
+
+    def __iter__(self):
+        return self.mongodb_cursor
 
 class PyMongoDataAccess(DataStorage):
     """Access records in MongoDB."""
@@ -74,7 +84,8 @@ class PyMongoDataAccess(DataStorage):
         cursor = cursor.skip(start)
         if limit is not None:
             cursor = cursor.limit(limit)
-        return cursor
+
+        return MongoDbCursor(cursor)
 
     def get_run(self, run_id):
         try:
