@@ -22,7 +22,6 @@ def create_tmp_datastore():
          "training_steps": 1000, "learning_rate": 0.0001, "hidden_size": 500}
 
     run = {"status": "COMPLETED",
-                        "start_time": {"$date": 1476004818913},
                         "_id": "57f9efb2e4b8490d19d7c30e",
                         "info": {}, "resources": [],
                         "host": {"os": "Linux",
@@ -39,17 +38,21 @@ def create_tmp_datastore():
                                                         ["numpy", "1.11.2"],
                                                         ["sacred", "0.6.10"]],
                                        "name": "German nouns"},
-                        "heartbeat": {"$date": 1479211200000},
                         "result": 2403.52, "artifacts": [], "comment": "",
-                        "stop_time": {"$date": 1476009883302},
-                        "captured_out": "Output: \n"}
+                        # N.B. time formatting is different between mongodb and file store.
+                        "start_time": "2017-06-02T07:13:05.305845",
+                        "stop_time": "2017-06-02T07:14:02.455460",
+                        "heartbeat": "2017-06-02T07:14:02.452597",
+           "captured_out": "Output: \n"}
 
     experiment_dir = tempfile.mkdtemp()
+    experiment42 = os.path.join(experiment_dir, "42") # experiment number 42
+    os.mkdir(experiment42)
 
-    with open(os.path.join(experiment_dir, "config.json"), 'w') as config_file:
+    with open(os.path.join(experiment42, "config.json"), 'w') as config_file:
        json.dump(config, config_file)
 
-    with open(os.path.join(experiment_dir, "run.json"), 'w') as run_file:
+    with open(os.path.join(experiment42, "run.json"), 'w') as run_file:
         json.dump(run, run_file)
 
     return experiment_dir
@@ -59,5 +62,20 @@ def tmpfilestore() -> FileStorage:
     dir = create_tmp_datastore()
     return FileStorage(dir)
 
+def test_get_run(tmpfilestore : FileStorage):
+    run42 = tmpfilestore.get_run(42)
+
+    for key in ["info", "resources", "host", "experiment", "result", "artifacts", "comment", "start_time", "stop_time",
+                "heartbeat", "captured_out", "config"]:
+        assert key in run42
+
 def test_get_runs(tmpfilestore : FileStorage):
-    assert 42 != 42
+    runs = tmpfilestore.get_runs()
+    runs = list(runs)
+
+    assert 1 == len(runs)
+
+    run = runs[0]
+    for key in ["info", "resources", "host", "experiment", "result", "artifacts", "comment", "start_time", "stop_time",
+                "heartbeat", "captured_out", "config"]:
+        assert key in run
