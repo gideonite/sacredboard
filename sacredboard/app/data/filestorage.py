@@ -2,7 +2,7 @@ import datetime
 import os
 import json
 
-from sacredboard.app.data.datastorage import DataStorage
+from sacredboard.app.data.datastorage import Cursor, DataStorage
 
 config_json = "config.json"
 run_json = "run.json"
@@ -26,7 +26,7 @@ def _create_run(runjson, configjson):
 
     return runjson
 
-class FileStoreCursor():
+class FileStoreCursor(Cursor):
     def __init__(self, count, iterable):
         self.iterable = iterable
         self._count = count

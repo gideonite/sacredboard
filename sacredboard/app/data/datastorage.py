@@ -1,3 +1,13 @@
+class Cursor:
+    def __init__(self):
+        pass
+
+    def count(self):
+        raise NotImplemented()
+
+    def __iter__(self):
+        raise NotImplemented()
+
 class DataStorage:
     def __init__(self):
         pass
